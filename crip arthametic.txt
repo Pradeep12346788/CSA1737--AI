@@ -1,0 +1,36 @@
+from itertools import permutations
+
+def solve_cryptarithmetic(puzzle):
+    # Extract the words and result from the puzzle
+    words = puzzle.split()
+    unique_chars = set(''.join(words))
+    result_word = words[-1]
+    words = words[:-1]
+    
+    # Generate all possible digit permutations (0-9) for unique characters
+    for perm in permutations(range(10), len(unique_chars)):
+        # Assign digits to characters
+        char_to_digit = {char: digit for char, digit in zip(unique_chars, perm)}
+        
+        # Check if leading digits are not zero for all words
+        if all(char_to_digit[word[0]] != 0 for word in words + [result_word]):
+            # Convert words to their corresponding numbers
+            numbers = [int(''.join(str(char_to_digit[char]) for char in word)) for word in words]
+            result_number = int(''.join(str(char_to_digit[char]) for char in result_word))
+            
+            # Check if the equation holds true
+            if sum(numbers) == result_number:
+                return {char: digit for char, digit in zip(unique_chars, perm)}
+    
+    return None
+
+# Example usage:
+if __name__ == '__main__':
+    puzzle = "SEND + MORE = MONEY"
+    solution = solve_cryptarithmetic(puzzle)
+    if solution:
+        print("Solution found:")
+        for char, digit in solution.items():
+            print(f"{char} = {digit}")
+    else:
+        print("No solution found.")
